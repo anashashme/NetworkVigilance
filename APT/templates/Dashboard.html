@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>APT Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="performance-graph" style="width: 100%; height: 400px;"></div>
+
+    <div id="malicious-ips-container">
+        <h3>Detected Malicious IPs</h3>
+        <table id="malicious-ips-table" border="1">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dynamic Rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Fetch and render model performance data
+        function loadModelPerformanceGraph() {
+            $.getJSON('/get_model_performance', function(data) {
+                const xData = data.map(d => d.epoch);
+                const yData = data.map(d => d.accuracy);
+
+                const trace = {
+                    x: xData,
+                    y: yData,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: 'Accuracy'
+                };
+
+                Plotly.newPlot('performance-graph', [trace]);
+            });
+        }
+
+        // Fetch and render malicious IPs
+        function loadMaliciousIPs() {
+            $.getJSON('/get_malicious_ips', function(data) {
+                const tableBody = $('#malicious-ips-table tbody');
+                tableBody.empty();
+                data.forEach(item => {
+                    const row = `
+                        <tr>
+                            <td>${item.ip}</td>
+                            <td>${item.status}</td>
+                            <td>
+                                ${item.status === "Active" ? `<button onclick="blockIP('${item.ip}')">Block</button>` : 'Blocked'}
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            });
+        }
+
+        // Block IP
+        function blockIP(ip) {
+            $.ajax({
+                url: '/block_ip',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ ip }),
+                success: function(response) {
+                    alert(response.message);
+                    loadMaliciousIPs();
+                }
+            });
+        }
+
+        // Initialize Dashboard
+        $(document).ready(function() {
+            loadModelPerformanceGraph();
+            loadMaliciousIPs();
+        });
+    </script>
+</body>
+</html>
