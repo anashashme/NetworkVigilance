@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/faq.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>APT</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}"><i class="fas fa-columns"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('ip_location') }}"><i class="fas fa-map-marker-alt"></i> IP Location</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <header>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button class="search-button">Search</button>
+            </div>
+            <div class="header-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-expand"></i>
+            </div>
+        </header>
+        <main>
+            <h1>Advanced Persistent Threat</h1>
+            <div class="faq-section">
+                <h2>Frequently Asked Questions</h2>
+                <p class="description">No similar overall dislike or objectionable actions, with reproach...</p>
+            
+                <div class="contact-buttons">
+                    <a href="#" class="email-button">Email us your question</a>
+                    <a href="#" class="tweet-button">Send us a tweet</a>
+                </div>
+            
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-icon">Q.</div>
+                        <div>
+                            <h3>What is APTXShield?</h3>
+                            <p>APTXShield is an advanced security solution designed to detect and prevent Advanced Persistent Threats (APTs) using network security tools and real-time threat analysis.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-icon">Q.</div>
+                        <div>
+                            <h3>How does APTXShield detect threats?</h3>
+                            <p>APTXShield leverages network monitoring tools like Zeek and Suricata, along with the ELK stack, to identify and analyze potential threats in real-time.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-icon">Q.</div>
+                        <div>
+                            <h3>What datasets does APTXShield use for threat analysis?</h3>
+                            <p>APTXShield uses the DAPT2020 dataset, which helps in training machine learning models to accurately identify and respond to various security threats.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-icon">Q.</div>
+                        <div>
+                            <h3>Can APTXShield perform IP lookups?</h3>
+                            <p>Yes, APTXShield includes an IP lookup feature that allows users to gather detailed information on IP addresses by connecting to external APIs.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Add more FAQ items as needed -->
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p>2024 © Advanced Persistent Threat | All Rights Reserved</p>
+        </footer>
+    </div>
+    <script src="{{ url_for('static', filename='js/faq.js') }}"></script>
+
+    
+</body>
+</html>
