@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ip-location.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>APT</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}"><i class="fas fa-columns"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('faq') }}"><i class="fas fa-question-circle"></i> Frequently Asked Questions</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <header>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button class="search-button">Search</button>
+            </div>
+            <div class="header-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-expand"></i>
+            </div>
+        </header>
+        <main>
+            <h1>Advanced Persistent Threat</h1>
+            <div class="ip-lookup-container">
+                <div class="form-group">
+                    <label for="ip-input">IP Location:</label>
+                    <input type="text" id="ip-input" placeholder="IPv4, IPv6 or Domain Name">
+                    <button id="search-button" onclick="fetchIpDetails()">Search</button>
+                    <button id="refresh-button" onclick="refreshPage()">🔄</button>
+                </div>
+        
+                <div class="info-sections">
+                    <!-- IP Details Card -->
+                    <div class="info-card">
+                        <h3>IP Details</h3>
+                        <div class="info-content">
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>IPv4:</span> <span id="ipv4">-</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>IP Location:</span> <span id="ip-location">-</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-signal"></i>
+                                <span>ISP:</span> <span id="isp">-</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Proxy:</span> <span id="proxy">-</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-laptop"></i>
+                                <span>Platform:</span> <span id="platform">-</span>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Additional Information Card -->
+                    <div class="info-card">
+                        <h3>Additional Information</h3>
+                        <div class="info-content">
+                            <div class="info-item">
+                                <i class="fas fa-network-wired"></i>
+                                <span>IPv6:</span> <span id="ipv6">-</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-flag"></i>
+                                <span>Country Code:</span> <span id="country-code">-</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-hashtag"></i>
+                                <span>IP Number:</span> <span id="ip-number">-</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>JavaScript:</span> Enabled
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-cookie-bite"></i>
+                                <span>Cookie:</span> <span id="cookie">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div> 
+        </main>
+        <footer>
+            <p>2024 © Advanced Persistent Threat | All Rights Reserved</p>
+        </footer>
+    </div>
+    <script src="{{ url_for('static', filename='js/ip-location.js') }}"></script>
+
+</body>
+</html>
