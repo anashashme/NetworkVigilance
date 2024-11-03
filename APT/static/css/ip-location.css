@@ -1,0 +1,392 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    height: 100%;
+    display: flex;
+    background-color: #f5f7fa;
+    color: #333;
+    flex-direction: column;
+    margin: 0;
+
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    height: 100vh;
+    color: #ecf0f1;
+    position: fixed;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    top: 0;
+    left: 0;
+}
+
+.sidebar-header {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ecf0f1;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+}
+
+.nav-links a {
+    color: inherit; /* Keeps the default color */
+    text-decoration: none; /* Removes underline */
+}
+
+.nav-links a:visited {
+    color: inherit; /* Ensures visited links don't change color */
+}
+
+.nav-links li {
+    padding: 15px 25px;
+    font-size: 16px;
+    color: #bdc3c7;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.nav-links li:hover {
+    background-color: #34495e;
+    color: #ecf0f1;
+}
+
+.nav-links i {
+    margin-right: 10px;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    margin-left: 250px; /* same width as sidebar */
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-bar input {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    width: 250px;
+}
+
+.search-button {
+    background-color: #6690d4;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.header-icons i {
+    font-size: 20px;
+    margin-left: 20px;
+    cursor: pointer;
+    color: #333;
+}
+
+main {
+    padding: 20px;
+}
+
+main h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+/* Main Container */
+.ip-lookup-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Section Title */
+.ip-lookup-container h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Form Group */
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.form-group input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#search-button,
+#refresh-button {
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #6690d4;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#search-button:hover,
+#refresh-button:hover {
+    background-color: #557cb5;
+}
+
+/* Flex Container for IP Details and Additional Info */
+.info-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .info-sections {
+        flex-direction: row;
+    }
+}
+
+/* Individual Section Styles */
+.info-card {
+    flex: 1;
+    background-color: #f8f9fb;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.info-item i {
+    font-size: 18px;
+    color: #6690d4;
+}
+
+.info-item span {
+    font-weight: 500;
+    color: #555;
+}
+footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 14px;
+    background-color: #34495e;
+    color: #ecf0f1;
+    border-top: 2px solid #e0e0e0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
+
+footer p {
+    margin: 0;
+}
+/* Dark theme primary colors */
+:root {
+    --color-primary-a0: #c7c7c7;
+    --color-primary-a10: #cdcdcd;
+    --color-primary-a20: #d3d3d3;
+    --color-primary-a30: #d9d9d9;
+    --color-primary-a40: #e0e0e0;
+    --color-primary-a50: #e6e6e6;
+
+    /* Dark theme surface colors */
+    --color-surface-a0: #121212;
+    --color-surface-a10: #282828;
+    --color-surface-a20: #3f3f3f;
+    --color-surface-a30: #575757;
+    --color-surface-a40: #717171;
+    --color-surface-a50: #8b8b8b;
+
+    /* Dark theme mixed surface colors */
+    --color-surface-mixed-a0: #212121;
+    --color-surface-mixed-a10: #363636;
+    --color-surface-mixed-a20: #4c4c4c;
+    --color-surface-mixed-a30: #636363;
+    --color-surface-mixed-a40: #7b7b7b;
+    --color-surface-mixed-a50: #949494;
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+    background-color: var(--color-surface-a0);  /* Dark background */
+    color: var(--color-primary-a50);  /* Light gray text */
+}
+
+/* Content Area */
+.dark-mode .content {
+    background-color: var(--color-surface-a10);  /* Slightly lighter background for content */
+}
+
+/* Header */
+.dark-mode header {
+    background-color: var(--color-surface-a0);  /* Dark background for header */
+    color: var(--color-primary-a50);  /* Light gray text */
+}
+
+/* Main Title and Headings */
+.dark-mode h1, .dark-mode h3 {
+    color: var(--color-primary-a40);  /* Light gray for headings */
+}
+
+/* Search Bar Input */
+.dark-mode .search-bar input {
+    background-color: var(--color-surface-mixed-a20);  /* Dark background for input */
+    color: var(--color-primary-a50);  /* Light gray text */
+    border: 1px solid var(--color-surface-mixed-a30);  /* Border matching input background */
+}
+
+/* Search Button */
+.dark-mode .search-button {
+    background-color: var(--color-primary-a20);  /* Light gray background for search button */
+    color: var(--color-surface-a0);  /* Dark text */
+}
+
+.dark-mode .search-button:hover {
+    background-color: var(--color-primary-a30);  /* Slightly darker gray for hover */
+    color: var(--color-surface-a50);  /* Lighter text on hover */
+}
+
+/* Header Icons */
+.dark-mode .header-icons i {
+    color: var(--color-primary-a30);  /* Light gray icons for accent */
+}
+
+/* Footer */
+.dark-mode footer {
+    background-color: var(--color-surface-mixed-a0);  /* Dark surface for footer */
+    color: var(--color-primary-a40);  /* Light gray footer text */
+}
+
+/* Links */
+.dark-mode a {
+    color: var(--color-primary-a20);  /* Light gray links */
+}
+
+.dark-mode a:hover {
+    color: var(--color-primary-a30);  /* Darker gray for links on hover */
+}
+
+/* Form Inputs (general) */
+.dark-mode input, .dark-mode textarea {
+    background-color: var(--color-surface-mixed-a20);  /* Dark background for form inputs */
+    color: var(--color-primary-a50);  /* Light gray text */
+    border: 1px solid var(--color-surface-mixed-a30);  /* Border matching input background */
+}
+/* For value elements */
+.dark-mode .value {
+    color: var(--color-primary-a40); /* Light gray, but slightly brighter for visibility */
+}
+
+/* If you want a more vibrant effect */
+.dark-mode .value {
+    color: var(--color-primary-a30); /* Slightly more intense light gray */
+}
+/* Dark Mode Styles for .ip-lookup-container, .info-card, and .info-sections */
+.dark-mode .ip-lookup-container {
+    background-color: #212121; /* Darker background for the container */
+    color: #e6e6e6; /* Light text color */
+}
+
+.dark-mode .info-card {
+    background-color: #2f2f2f; /* Dark background for each info card */
+    border: 1px solid #555; /* Border for the card */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for the card */
+}
+
+.dark-mode .info-sections {
+    background-color: #282828; /* Slightly darker background for the whole info-sections container */
+}
+
+.dark-mode .info-item {
+    color: #f5f5f5; /* Light color for text inside info items */
+    margin-bottom: 10px;
+}
+
+.dark-mode .info-item span {
+    color: #ff9800; /* Accent color for the labels inside info items */
+}
+
+.dark-mode .info-item i {
+    color: #2196f3; /* Accent color for icons */
+}
+
+/* Adjust the input fields and buttons for dark mode */
+.dark-mode input[type="text"], .dark-mode button {
+    background-color: #444; /* Dark background for input and buttons */
+    color: #fff; /* White text */
+    border: 1px solid #555; /* Border to match the dark theme */
+}
+
+/* Change hover effect for dark mode */
+.dark-mode input[type="text"]:hover, .dark-mode button:hover {
+    background-color: #555; /* Lighter hover effect */
+}
+
+.dark-mode button:focus, .dark-mode input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px #ff9800; /* Light orange focus effect */
+}
