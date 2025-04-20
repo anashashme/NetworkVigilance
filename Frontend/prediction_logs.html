@@ -1,0 +1,251 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="text-warning mb-0">
+                    <i class="fas fa-chart-line"></i> Prediction Logs
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0" id="logSearch" placeholder="🔍 Search logs...">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logs Table -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle text-center mb-0" id="logTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Timestamp</th>
+                                <th>Total Flows</th>
+                                <th>Malicious Flows</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody">
+                            {% for log in prediction_logs %}
+                            <tr id="log-row-{{ log.id }}">
+                                <td>{{ log.id }}</td>
+                                <td class="timestamp">{{ log.timestamp }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ log.total_flows }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger">{{ log.malicious_flows }}</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteLog({{ log.id }})">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not prediction_logs %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <i class="fas fa-info-circle text-info me-2"></i> No prediction logs found
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-chart-bar"></i> Traffic Overview
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="logChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart & AJAX -->
+<script>
+// AJAX delete log row
+function deleteLog(id) {
+    showConfirmation(`Are you sure you want to delete log #${id}? This action cannot be undone.`, function() {
+        const row = document.getElementById(`log-row-${id}`);
+
+        // Add loading effect
+        row.style.opacity = '0.5';
+
+        fetch(`/delete_log/${id}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    // Add fade-out animation
+                    row.style.transition = 'opacity 0.5s, transform 0.5s';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(20px)';
+
+                    // Show success notification
+                    showToast('Log Deleted', `Log #${id} has been successfully deleted from the system.`, 'success');
+
+                    setTimeout(() => {
+                        row.remove();
+                        refreshChart(); // update chart after delete
+
+                        // Check if table is empty
+                        const tbody = document.getElementById('logTableBody');
+                        if (tbody.children.length === 0) {
+                            tbody.innerHTML = `
+                              <tr>
+                                <td colspan="5" class="text-center py-4">
+                                  <i class="fas fa-info-circle text-info me-2"></i> No prediction logs found
+                                </td>
+                              </tr>
+                            `;
+                        }
+                    }, 500);
+                } else {
+                    row.style.opacity = '1';
+                    showToast('Error', 'Failed to delete the log. Please try again.', 'danger');
+                }
+            })
+            .catch(error => {
+                row.style.opacity = '1';
+                showToast('Error', `Delete failed: ${error}`, 'danger');
+            });
+    });
+}
+
+// Search logs
+document.getElementById("logSearch").addEventListener("keyup", function () {
+    const value = this.value.toLowerCase();
+    document.querySelectorAll("#logTableBody tr").forEach(function (row) {
+        row.style.display = row.textContent.toLowerCase().includes(value) ? "" : "none";
+    });
+});
+
+// Chart initialization & auto-refresh
+const ctx = document.getElementById('logChart').getContext('2d');
+let trafficChart;
+
+async function fetchChartData() {
+    const res = await fetch("/get_logs_data");
+    const data = await res.json();
+
+    return {
+        labels: data.labels.map(label => formatTimestamp(label)),
+        datasets: [
+            {
+                label: "Total Flows",
+                data: data.total_flows,
+                backgroundColor: "rgba(54, 162, 235, 0.6)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1,
+                borderRadius: 4,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            },
+            {
+                label: "Malicious Flows",
+                data: data.malicious_flows,
+                backgroundColor: "rgba(255, 99, 132, 0.6)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                borderWidth: 1,
+                borderRadius: 4,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            }
+        ]
+    };
+}
+
+async function initChart() {
+    const chartData = await fetchChartData();
+    trafficChart = new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 1000, easing: 'easeOutQuart' },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        boxWidth: 12,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#212121',
+                    bodyColor: '#212121',
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    boxPadding: 6,
+                    usePointStyle: true
+                }
+            }
+        }
+    });
+}
+
+async function refreshChart() {
+    const updatedData = await fetchChartData();
+    trafficChart.data.labels = updatedData.labels;
+    trafficChart.data.datasets = updatedData.datasets;
+    trafficChart.update();
+}
+
+// Init + auto-refresh
+document.addEventListener('DOMContentLoaded', function() {
+    initChart();
+    setInterval(refreshChart, 15000); // Refresh every 15 seconds
+
+    // Initialize pagination
+    setupPagination('logTable', 20);
+});
+</script>
+{% endblock %}
