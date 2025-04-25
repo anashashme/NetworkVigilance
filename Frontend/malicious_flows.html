@@ -1,0 +1,167 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h2 class="text-primary">
+        <i class="fas fa-shield-alt"></i> Malicious Flows
+    </h2>
+</div>
+
+<!-- Chart -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <i class="fas fa-chart-bar"></i> Malicious Detections Over Time
+            </div>
+            <div class="card-body">
+                <canvas id="maliciousChart" style="height: 320px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-database"></i> Detected Malicious Flows
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle text-center mb-0" id="maliciousFlowsTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>IP Address</th>
+                                <th>Timestamp</th>
+                                <th>Predicted By</th>
+                                <th>Model Score</th>
+                                <th>Report</th>
+                                <th>View</th>
+                            </tr>
+                        </thead>
+                        <tbody id="maliciousFlowsTableBody">
+                            {% for flow in malicious_flows %}
+                            <tr>
+                                <td>{{ flow.id }}</td>
+                                <td><span class="badge bg-danger">{{ flow.src_ip }}</span></td>
+                                <td>{{ flow.timestamp.strftime("%b %d, %Y, %I:%M %p") }}</td>
+                                <td><span class="badge bg-info">{{ flow.predicted_by }}</span></td>
+                                <td>
+                                    {% set score = flow.model_score|float %}
+                                    {% if score >= 0.9 %}
+                                        <span class="badge bg-danger" title="Highest Risk IP">{{ score }}</span>
+                                    {% elif score >= 0.8 %}
+                                        <span class="badge bg-warning text-dark" title="Super Moderate Risk IP">{{ score }}</span>
+                                    {% elif score >= 0.7 %}
+                                        <span class="badge bg-secondary" title="Moderate Risk IP">{{ score }}</span>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">Low Risk</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/generate_report/{{ flow.id }}" class="btn btn-outline-danger btn-sm" title="Download PDF Report">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if flow.session_id %}
+                                        <a href="/session/{{ flow.session_id }}" class="btn btn-sm btn-outline-info">
+                                            View
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not malicious_flows %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <i class="fas fa-check-circle text-success me-2"></i> No malicious flows detected
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('maliciousChart').getContext('2d');
+    let maliciousChart;
+
+    async function fetchMaliciousPerMinute() {
+        const res = await fetch("/get_malicious_chart_data");
+        const data = await res.json();
+        return {
+            labels: data.labels,
+            datasets: [{
+                label: "Malicious Flows per Minute",
+                data: data.counts,
+                borderColor: "rgba(3, 169, 244, 1)",
+                backgroundColor: "rgba(3, 169, 244, 0.2)",
+                tension: 0.4,
+                fill: true
+            }]
+        };
+    }
+
+    async function initMaliciousChart() {
+        const chartData = await fetchMaliciousPerMinute();
+        maliciousChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true },
+                    tooltip: {
+                        backgroundColor: 'rgba(255,255,255,0.9)',
+                        titleColor: '#212121',
+                        bodyColor: '#212121',
+                        borderColor: 'rgba(0,0,0,0.1)',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 10,
+                        title: { display: true, text: "Detection Count" },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        title: { display: true, text: "Timestamp (minute)" },
+                        ticks: { autoSkip: true },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    async function refreshMaliciousChart() {
+        const updatedData = await fetchMaliciousPerMinute();
+        maliciousChart.data.labels = updatedData.labels;
+        maliciousChart.data.datasets = updatedData.datasets;
+        maliciousChart.update();
+    }
+
+    initMaliciousChart();
+    setInterval(refreshMaliciousChart, 15000);
+
+    setupPagination('maliciousFlowsTable', 20);
+});
+</script>
+{% endblock %}
