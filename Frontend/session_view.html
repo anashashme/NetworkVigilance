@@ -1,0 +1,188 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h2 class="text-primary">
+        <i class="fas fa-user-shield"></i> Session Details
+    </h2>
+    <p>Viewing flows for Session ID: <strong>{{ session_id }}</strong></p>
+</div>
+
+<!-- Summary Cards -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-3 col-12 mb-2">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h6>Blocked</h6>
+                <h4 class="text-danger">{{ blocked_count }} ({{ block_percentage }}%)</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-12 mb-2">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h6>Predicted By</h6>
+                <span class="badge bg-info">{{ predicted_by }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-12 mb-2">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h6>Session Time</h6>
+                <h5>{{ session_time }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Risk Alert -->
+{% if session_flows %}
+    {% set highest_risk = session_flows | max(attribute='model_score') %}
+    {% set risk_score = highest_risk.model_score | float %}
+    {% if risk_score >= 0.9 %}
+        {% set risk_level = "Highest Risk IP" %}
+    {% elif risk_score >= 0.8 %}
+        {% set risk_level = "Super Moderate Risk IP" %}
+    {% elif risk_score >= 0.7 %}
+        {% set risk_level = "Moderate Risk IP" %}
+    {% else %}
+        {% set risk_level = "" %}
+    {% endif %}
+
+    {% if risk_level %}
+    <div class="alert alert-danger text-center">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>{{ risk_level }}:</strong> {{ highest_risk.src_ip }} with score <strong>{{ highest_risk.model_score }}</strong>
+    </div>
+    {% endif %}
+{% endif %}
+
+<!-- Chart -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-chart-line"></i> Model Score Trend in This Session
+            </div>
+            <div class="card-body">
+                <canvas id="sessionScoreChart" height="300" style="max-height: 350px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-database"></i> Malicious Flows in this Session
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>IP Address</th>
+                                <th>Timestamp</th>
+                                <th>Model Score</th>
+                                <th>Risk Level</th>
+                                <th>Blocked?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flow in session_flows %}
+                            <tr>
+                                <td>{{ flow.id }}</td>
+                                <td><span class="badge bg-danger">{{ flow.src_ip }}</span></td>
+                                <td>{{ flow.timestamp.strftime('%b %d, %Y, %I:%M %p') }}</td>
+                                <td>{{ flow.model_score }}</td>
+                                <td>
+                                    {% set score = flow.model_score | float %}
+                                    {% if score >= 0.9 %}
+                                        <span class="badge bg-danger">Highest Risk IP</span>
+                                    {% elif score >= 0.8 %}
+                                        <span class="badge bg-warning text-dark">Super Moderate Risk IP</span>
+                                    {% elif score >= 0.7 %}
+                                        <span class="badge bg-info text-dark">Moderate Risk IP</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Low Risk</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if flow.was_blocked %}
+                                        <span class="badge bg-danger">Yes</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">No</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center my-3">
+                    <a href="/malicious_flows" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back to All Flows
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ChartJS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('sessionScoreChart').getContext('2d');
+const labels = {{ chart_labels | tojson }};
+const scores = {{ chart_scores | tojson }};
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Model Score',
+            data: scores,
+            fill: false,
+            borderColor: '#007bff',
+            backgroundColor: '#007bff',
+            borderWidth: 2,
+            tension: 0,  // <== straight lines
+            pointRadius: 5,
+            pointBackgroundColor: '#007bff',
+            pointBorderColor: '#007bff',
+            pointHoverRadius: 7,
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                min: 0.0,
+                max: 1.0,
+                ticks: {
+                    stepSize: 0.1
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `Model Score: ${context.parsed.y}`;
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
