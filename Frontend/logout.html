@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logging Out - Network Vigilance Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap, Font Awesome & Google Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300  rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #b71c1c;
+            --primary-light: #f8d7da;
+            --primary-dark: #8f0000;
+            --secondary: #2196f3;
+            --secondary-light: #e3f2fd;
+            --secondary-dark: #0d47a1;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --info: #03a9f4;
+            --dark: #212121;
+            --light: #f5f5f5;
+            --gray: #757575;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5, #e3f2fd);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.7s ease-in-out;
+            overflow: hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logout-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.5s ease-out;
+            text-align: center;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logout-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .logout-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .logout-message {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .logout-progress {
+            height: 6px;
+            background-color: var(--gray-light);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .logout-progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: var(--primary);
+            border-radius: 3px;
+            animation: progress 2s forwards;
+        }
+
+        @keyframes progress {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation-name: float-particle;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            background-color: var(--primary-light);
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles background -->
+    <div class="particles" id="particles"></div>
+
+    <div class="logout-container">
+        <i class="fas fa-sign-out-alt logout-icon"></i>
+        <h1 class="logout-title">Logging Out</h1>
+        <p class="logout-message">Thank you for using Network Vigilance Dashboard</p>
+
+        <div class="logout-progress">
+            <div class="logout-progress-bar"></div>
+        </div>
+
+        <a href="/login" class="btn btn-primary" id="loginBtn" style="display: none;">
+            <i class="fas fa-sign-in-alt me-2"></i> Back to Login
+        </a>
+    </div>
+
+    <!-- Bootstrap & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create particles
+            createParticles();
+
+            // Show login button after progress completes
+            setTimeout(function() {
+                document.getElementById('loginBtn').style.display = 'inline-block';
+            }, 2000);
+
+            // Create floating particles
+            function createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                const particleCount = 50;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+
+                    // Random size between 5px and 20px
+                    const size = Math.random() * 15 + 5;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+
+                    // Random position
+                    particle.style.left = `${Math.random() * 100}vw`;
+                    particle.style.top = `${Math.random() * 100}vh`;
+
+                    // Random animation duration between 15s and 45s
+                    const duration = Math.random() * 30 + 15;
+                    particle.style.animationDuration = `${duration}s`;
+
+                    // Random delay
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+
+                    // Random color
+                    const colors = [
+                        'rgba(183, 28, 28, 0.2)',  // primary
+                        'rgba(33, 150, 243, 0.2)', // secondary
+                        'rgba(76, 175, 80, 0.2)',  // success
+                        'rgba(255, 152, 0, 0.2)'   // warning
+                    ];
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                    particlesContainer.appendChild(particle);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
