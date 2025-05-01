@@ -72,7 +72,7 @@ To generate a realistic dataset capturing Advanced Persistent Threat (APT) behav
 
 **APT Attack Scenarios Simulated:**
 
-* **Stealth Scans (Reconnaissance):** Using advanced Nmap options (e.g., -sS, -sU, -sV) to perform stealthy TCP and UDP scans.
+* **Stealth Scans (Reconnaissance):** Using advanced Nmap options (e.g., T1, -sS, -sU, -sV) to perform stealthy TCP and UDP scans.
 * **Port Scanning:** Standard Nmap scans to enumerate open services.
 * **Brute Force Attacks:** SSH and RDP targeted via Hydra.
 * **Denial of Service (DoS):** SYN/ICMP floods to overload the system.
@@ -152,35 +152,35 @@ This module handles the system's end-to-end operation during deployment. It runs
 * **Firewall Block:** Detected malicious flows result in immediate IP blocking via `netsh advfirewall`. The blocked IP and flow metadata are logged into PostgreSQL.
 * **Dashboard Features:**
 
-  * **Session View (`session_view.html`):** Visualizes flow groups by detection session.
-  * **Prediction Logs (`prediction_logs.html`):** Shows a timeline of past alerts and classification results.
-  * **Blocked IPs (`blocked_ips.html`):** Lets admins unblock IPs or view blocked history.
-  * **Malicious Flows (`malicious_flows.html`):** Detailed breakdown of suspicious activity.
-  * **Report Viewer (`report_template.html`):** Rendered HTML used to export professional PDFs.
   * **User Authentication Pages:** Includes `login.html`, `logout.html`, `signup.html`, and `profile.html` templates — each designed for secure admin access and session management.Login, signup, and profile sections secured for admin access only.\*\* Triggered every 30 seconds
-* **Feature Extraction:** In-memory with CICFlowMeter-like parser
-* **Flow Classification:** Both models applied in real-time
-* **Firewall Block:** Detected malicious IPs are blocked via `netsh advfirewall`
+  * **Feature Extraction:** In-memory with CICFlowMeter-like parser
+  * **Flow Classification:** Both models applied in real-time
+  * **Firewall Block:** Detected malicious IPs are blocked via `netsh advfirewall`
+  * **Blocked IPs (`blocked_ips.html`):** Lets admins unblock IPs or view blocked history.
+  * **Prediction Logs (`prediction_logs.html`):** Shows a timeline of past alerts and classification results.
+  * **Malicious Flows (`malicious_flows.html`):** Detailed breakdown of suspicious activity.
+  * **Session View (`session_view.html`):** Visualizes flow groups by detection session.
+  * **Report Viewer (`report_template.html`):** Rendered HTML used to export professional PDFs.
+  
 * **Dashboard Features:**
 
-  * Session view with flow breakdown
-  * Prediction history log
-  * IP blocking/unblocking
-  * Manual report generation
   * User login/signup/profile access
-
+  * IP blocking/unblocking
+  * Prediction history log
+  * Session view with flow breakdown
+  * Manual report generation
+  
 ---
 
  📊 Model Overview
 
 This module is responsible for performing machine learning-based flow classification. It encapsulates model training, loading, and prediction logic for both supervised and anomaly-based detection.
 
-Network Vigilance uses a hybrid detection architecture achieving **94% accuracy**:
-
  🎯 Supervised Model: Random Forest
 
 * Trained with labeled flows
 * Captures known malicious patterns
+* Achieving **94% accuracy**
 
  🔍 Unsupervised Model: Isolation Forest
 
@@ -240,5 +240,18 @@ Additionally, the system supports **automated threat report generation**, which 
 
  Planned Enhancements:
 
-* 🔁 **Transfer Learning / Incremental Learning** support for adaptable models
-* Cloud-compatible agents for remote capture
+* 🔁 Transfer Learning / Incremental Learning support for adaptable models — allowing the system to continuously learn from new environments without requiring complete retraining. This enables seamless adaptation to changing network patterns, device behavior, or evolving APT strategies over time.
+
+---
+
+ 👥 Contributors
+
+* **Anas Hashmi**
+* **Yasir**
+* **Kabir Ahmed**
+
+---
+
+ 📄 License
+
+This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
