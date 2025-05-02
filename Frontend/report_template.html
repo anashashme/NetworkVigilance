@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Network Vigilance Report</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fdfdfd;
+      color: #2c2c2c;
+      line-height: 1.6;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    header img {
+      height: 190px; /* SIGNIFICANTLY INCREASED */
+      margin-right: 25px;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      color: #0b3556;
+      margin: 0;
+    }
+
+    section {
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-size: 1.6em;
+      color: #0b3556;
+      margin-bottom: 10px;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #000;
+      margin-right: 8px;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #fff;
+      display: inline-block;
+    }
+
+    .low { background-color: #4caf50; }
+    .moderate { background-color: #ffc107; color: #000; }
+    .high { background-color: #f44336; }
+
+    .verification-box {
+      border-left: 6px solid #0b3556;
+      background-color: #eaf6ff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+    }
+
+    .verification-box h2 {
+      margin-top: 0;
+      color: #0b3556;
+      font-size: 1.6em;
+      border-bottom: 2px solid #0b3556;
+      padding-bottom: 8px;
+    }
+
+    .verification-box p {
+      margin: 12px 0;
+      font-size: 1em;
+    }
+
+    .verification-box strong {
+      color: #222;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.85em;
+      color: #888;
+      border-top: 1px solid #eee;
+      padding: 12px 0 0 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="{{ logo_path }}" alt="Network Vigilance Logo" />
+    <div>
+      <h1>Automated Threat Intelligence Report</h1>
+    </div>
+  </header>
+
+  <section>
+  <h2>IP Risk Summary</h2>
+  <p>This report provides a professional risk evaluation of an IP address ({{ flow.src_ip }}) flagged during our live traffic analysis. The IP was subjected to advanced flow-based threat detection, which revealed characteristics consistent with abnormal or suspicious behavior.</p>
+
+  <p><span class="label">IP Address:</span> {{ flow.src_ip }}</p>
+  <p><span class="label">Model Score:</span> {{ flow.model_score }}</p>
+  <p><span class="label">Risk Level:</span>
+    {% if flow.model_score >= 0.9 %}
+      <span class="badge high">High Risk</span>
+    {% elif flow.model_score >= 0.8 %}
+      <span class="badge moderate">Moderate Risk</span>
+    {% elif flow.model_score >= 0.7 %}
+      <span class="badge moderate">Low-Moderate Risk</span>
+    {% else %}
+      <span class="badge low">Low Risk</span>
+    {% endif %}
+  </p>
+
+  <p>
+    {% if flow.model_score >= 0.9 %}
+      This IP address exhibits behavior highly consistent with known threat signatures and anomalies. Immediate investigation is advised as it may indicate an active threat such as a botnet controller, malware distribution point, or coordinated scan/probe operation.
+    {% elif flow.model_score >= 0.8 %}
+      The IP demonstrates noticeable irregularities in network traffic patterns. While not definitively malicious, it warrants timely analysis and potential mitigation to avoid compromise.
+    {% elif flow.model_score >= 0.7 %}
+      The IP shows some deviation from typical traffic baselines. Although the risk is not severe, continued monitoring is recommended to detect potential escalation.
+    {% else %}
+      This IP exhibits standard, benign traffic behavior with no significant anomalies detected. It is considered safe under current analysis.
+    {% endif %}
+  </p>
+
+  <p><em>As part of our automated threat response protocol, this IP was immediately blocked upon detection to prevent any further interaction with internal systems.</em></p>
+</section>
+
+
+  <section>
+    <h2>Detection Details</h2>
+    <p>The threat detection was performed at: <strong>{{ flow.timestamp.strftime('%b %d, %Y, %I:%M %p') }}</strong>, using our hybrid prediction system labeled as <strong>{{ flow.predicted_by }}</strong>.</p>
+    <p>This system combines supervised and unsupervised learning models to maximize detection accuracy across diverse network conditions. The session ID associated with this incident — <code>{{ flow.session_id }}</code> — enables traceability of all flows that were analyzed together during this real-time scan.</p>
+  </section>
+
+  <section class="verification-box">
+    <h2>✔ Verification & Certification</h2>
+    <p>This report has been <strong>generated and validated</strong> by the <em>Network Vigilance Framework</em> — a trusted, enterprise-grade platform for automated threat detection through flow-based traffic analytics.</p>
+    <p><strong>Generated On:</strong> {{ now.strftime('%b %d, %Y, %I:%M %p') }}</p>
+  </section>
+
+  <footer>
+    &copy; {{ now.year }} Network Vigilance. All rights reserved.
+  </footer>
+
+</body>
+</html>
