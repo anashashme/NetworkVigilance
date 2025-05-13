@@ -9,23 +9,6 @@
 
 ---
 
- 📚 Table of Contents
-
-* [About the Project](about-the-project)
-* [System Features](system-features)
-* [Tech Stack](tech-stack)
-* [Custom Dataset Generation](custom-dataset-generation)
-* [Feature Extraction and Dataset Construction](feature-extraction-and-dataset-construction)
-* [Installation & Setup](installation--setup)
-* [Usage Guide](usage-guide)
-* [Model Overview](model-overview)
-* [PDF Reporting](pdf-reporting)
-* [Limitations & Future Work](limitations--future-work)
-* [Contributors](contributors)
-* [License](license)
-
----
-
  📖 About the Project
 
 **Network Vigilance** is a research-grade, enterprise-oriented system for real-time detection and mitigation of cyber threats on network environments. It goes beyond traditional IDS/IPS systems by integrating both supervised and unsupervised ML models trained on a **custom dataset**, collected from a realistic, virtualized lab simulating APT behaviors.
